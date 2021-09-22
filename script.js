@@ -3,13 +3,13 @@ const statusDisplay = document.querySelector('.game--status');
 
 let gameActive = true;
 let currentPlayer = "X";
-let gameState = ["","","","","","","","",""];
+let gameState = new Array(9).fill("");
 
 
 
 const winningMessage = () => `Player ${currentPlayer} has won!`;
 const drawMessage = () => `Game ended in a draw!!!!!`;
-const currentPlayerTurn = () => `it's ${currentPlayer}'s turn`;
+const currentPlayerTurn = () => `It's ${currentPlayer}'s turn`;
 
 
 statusDisplay.innerHTML = currentPlayerTurn();
@@ -24,6 +24,29 @@ const winningConditions = [
     [0, 4, 8],
     [2, 4, 6]
 ];
+
+
+const colors = ["#A864FD", "#00ff99",];
+let cancelConfettiAnimation = "";
+
+function frame() {
+  confetti({
+    particleCount: 2,
+    angle: 60,
+    spread: 55,
+    origin: { x: 0 },
+    colors: colors,
+  });
+  confetti({
+    particleCount: 2,
+    angle: 120,
+    spread: 55,
+    origin: { x: 1 },
+    colors: colors,
+  });
+  cancelConfettiAnimation = requestAnimationFrame(frame);
+}
+
 
 
 function handleCellPlayed(clickedCell, clickedcellEvent) {
@@ -56,8 +79,13 @@ function handleResultValidation() {
         }
     }
         if (roundWon) {
+
         statusDisplay.innerHTML = winningMessage();
         gameActive = false;
+        frame();
+        setTimeout(() => cancelAnimationFrame(cancelConfettiAnimation), 500);
+        document.querySelector('.game--restart').classList.remove('hide');
+        document.querySelector('.game--restart').classList.add('show')
         return;
     }
 
@@ -88,6 +116,9 @@ function handleCellClick(clickedcellEvent) {
 }
 
 function handleRestartGame() {
+    document.querySelector('.game--restart').classList.remove('show');
+    document.querySelector('.game--restart').classList.add('hide');
+
     gameActive = true;
     currentPlayer = "X";
     gameState = ["", "", "", "", "", "", "", "", ""];
